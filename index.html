@@ -1,206 +1,114 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>مغامرة مسك والدب - نموذج تفاعلي</title>
-<style>
-:root{
-  --pink:#d64a83;
-  --brown:#6b3d16;
-  --cream:#fff6df;
-  --gold:#f5cf75;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-top: env(safe-area-inset-top, 0px);
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden}
-body{
-  font-family:Tahoma,Arial,sans-serif;
-  background:linear-gradient(180deg,#f7ead0,#fff7e8);
-  color:#3b2613;
-  overscroll-behavior:none;
-}
-.app{
-  width:100vw;
-  height:100dvh;
-  max-height:100dvh;
-  display:grid;
-  grid-template-rows:auto minmax(0,1fr) auto;
-  gap:8px;
-  padding:calc(8px + var(--safe-top)) 8px calc(8px + var(--safe-bottom));
-}
-header,.controls{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  background:rgba(255,255,255,.78);
-  border:2px solid #efd7ad;
-  border-radius:18px;
-  padding:8px 10px;
-  box-shadow:0 8px 22px rgba(80,42,10,.10);
-  flex-shrink:0;
-}
-h1{font-size:clamp(16px,3.8vw,26px);margin:0;color:var(--brown);white-space:nowrap}
-.badges{display:flex;gap:4px;direction:ltr}.star{font-size:clamp(16px,4vw,23px);filter:grayscale(1);opacity:.35}.star.on{filter:none;opacity:1}
-.book{
-  position:relative;
-  overflow:hidden;
-  border-radius:20px;
-  border:3px solid #e5c08a;
-  background:#fff8e8;
-  box-shadow:0 14px 34px rgba(70,40,10,.20);
-  width:100%;
-  height:100%;
-  min-height:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  touch-action:manipulation;
-}
-.scene{position:absolute;inset:0;display:none;place-items:center;background:#fff8e8}.scene.active{display:grid;animation:fade .25s ease}@keyframes fade{from{opacity:.45}to{opacity:1}}
-.scene img{
-  display:block;
-  width:auto;
-  height:auto;
-  max-width:100%;
-  max-height:100%;
-  object-fit:contain;
-  object-position:center center;
-  background:#fff8e8;
-  user-select:none;
-  -webkit-user-drag:none;
-}
-.panel{
-  position:absolute;
-  inset:auto 4% 4% 4%;
-  background:rgba(255,248,229,.90);
-  border:2px solid #ecd1a1;
-  border-radius:18px;
-  padding:10px 12px;
-  font-size:clamp(13px,3.5vw,20px);
-  line-height:1.6;
-  text-align:center;
-  box-shadow:0 8px 20px rgba(91,52,12,.15);
-}
-.cover .panel{top:8%;bottom:auto;right:5%;left:auto;width:min(350px,78%);font-size:clamp(22px,7vw,44px);font-weight:bold;color:var(--pink)}
-button{border:0;border-radius:15px;background:var(--brown);color:white;padding:10px 13px;font-size:clamp(13px,3.5vw,16px);cursor:pointer;box-shadow:0 4px 0 #3e2109;white-space:nowrap}button:active{transform:translateY(2px);box-shadow:0 2px 0 #3e2109}button.secondary{background:#cf4a83;box-shadow:0 4px 0 #8a2450}button.light{background:#fff;color:#6b3d16;border:2px solid #e8c789;box-shadow:none}
-.hotspot{position:absolute;border-radius:18px;cursor:pointer}.hotspot:active{background:rgba(255,239,142,.18)}
-.tap-note{position:absolute;top:10px;right:10px;background:#fffbef;border:2px solid #e7c47d;border-radius:14px;padding:7px 10px;font-weight:bold;color:#7a4815;font-size:clamp(12px,3vw,16px)}
-.msg{position:absolute;left:50%;top:14%;transform:translateX(-50%);background:white;border:3px solid var(--gold);border-radius:20px;padding:10px 14px;font-size:clamp(16px,4vw,22px);font-weight:bold;display:none;z-index:6;white-space:nowrap}.msg.show{display:block;animation:pop .35s}@keyframes pop{0%{transform:translateX(-50%) scale(.7)}100%{transform:translateX(-50%) scale(1)}}
-.butterfly{position:absolute;font-size:clamp(26px,7vw,42px);cursor:pointer;animation:float 2.6s infinite ease-in-out}.butterfly:nth-child(2){animation-delay:.5s}.butterfly:nth-child(3){animation-delay:1s}@keyframes float{50%{transform:translateY(-14px) rotate(8deg)}}.hidden{display:none}.rain{position:absolute;inset:0;pointer-events:none;display:none;background-image:repeating-linear-gradient(110deg,rgba(75,138,210,.0) 0 12px,rgba(75,138,210,.55) 13px 15px,rgba(75,138,210,.0) 16px 34px);animation:rain .45s linear infinite}.rain.on{display:block}@keyframes rain{to{background-position:0 34px}}
-.progress{font-weight:bold;color:#704411;font-size:clamp(12px,3vw,15px)}.small{display:none}
-.controls{justify-content:center;flex-wrap:wrap}
-.coloring-modal{position:fixed;inset:0;background:rgba(38,24,10,.72);z-index:30;display:none;align-items:center;justify-content:center;padding:8px}.coloring-modal.open{display:flex}.coloring-card{width:min(980px,98vw);max-height:96dvh;overflow:auto;background:#fff8e8;border:3px solid #e5c08a;border-radius:20px;padding:10px;box-shadow:0 25px 60px rgba(0,0,0,.35)}.coloring-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}.coloring-top h2{font-size:18px}.coloring-tools{display:flex;gap:7px;align-items:center;justify-content:center;flex-wrap:wrap}.coloring-wrap{position:relative;width:100%;max-width:860px;margin:auto;border:3px solid #d7b171;border-radius:14px;overflow:hidden;background:white}.coloring-wrap img,.coloring-wrap canvas{width:100%;display:block}.coloring-wrap canvas{position:absolute;inset:0;touch-action:none}.palette{width:36px;height:36px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #b88742;cursor:pointer}.palette.active{box-shadow:0 0 0 4px #6b3d16}.range{accent-color:#6b3d16}
-@media(max-width:700px){
-  .app{gap:6px;padding:calc(6px + var(--safe-top)) 6px calc(6px + var(--safe-bottom));}
-  header{padding:6px 8px;border-radius:14px;justify-content:center}
-  .badges{display:none}
-  .book{border-width:2px;border-radius:14px}
-  .controls{padding:6px;border-radius:14px;gap:5px}
-  button{padding:8px 10px;border-radius:12px;box-shadow:0 3px 0 #3e2109}
-  .panel{display:none}
-  .cover .panel{display:block;font-size:24px;padding:8px;top:auto;bottom:7%;right:6%;left:6%;width:auto}
-  .tap-note{font-size:12px;padding:6px 8px;top:7px;right:7px;max-width:70%;}
-}
-@media(max-width:950px) and (orientation:landscape){
-  .app{grid-template-rows:minmax(0,1fr) auto;padding:4px;gap:4px;height:100dvh;}
-  header{display:none}
-  .book{border-width:2px;border-radius:12px;box-shadow:none}
-  .controls{padding:4px;gap:4px;border-radius:10px}
-  button{font-size:12px;padding:6px 9px;border-radius:10px;box-shadow:0 2px 0 #3e2109}
-  .progress{font-size:12px}
-  .panel{display:none}
-  .cover .panel{display:block;font-size:20px;bottom:5%;top:auto;right:6%;left:6%;width:auto;line-height:1.35}
-  .tap-note{font-size:11px;padding:5px 7px;top:5px;right:5px}
-  .butterfly{font-size:24px}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>مغامرة مسك والدب</title>
+  <style>
+    :root{
+      --bg:#fff7ea; --card:#fffdf8; --ink:#4a2b17; --muted:#8d6a4a;
+      --pink:#d94c8a; --gold:#e5b85c; --brown:#8b5a2b; --shadow:0 14px 38px rgba(82,47,21,.16);
+      --radius:22px;
+    }
+    *{box-sizing:border-box} html{height:100%; scroll-behavior:smooth}
+    body{margin:0; min-height:100%; font-family:Tahoma, Arial, sans-serif; background:linear-gradient(180deg,#fff4dc,#fffaf3 55%,#f8ead3); color:var(--ink); overflow-x:hidden;}
+    .app{min-height:100dvh; display:flex; flex-direction:column;}
+    header{position:sticky; top:0; z-index:10; backdrop-filter:blur(14px); background:rgba(255,250,243,.86); border-bottom:1px solid rgba(160,110,55,.15); padding:10px clamp(12px,3vw,32px);}
+    .topbar{max-width:1180px; margin:auto; display:flex; align-items:center; gap:10px; justify-content:space-between;}
+    .brand{display:flex; align-items:center; gap:10px; min-width:0}.logo{width:42px; height:42px; border-radius:50%; display:grid; place-items:center; background:#fff; box-shadow:var(--shadow); font-size:24px}.brand h1{font-size:clamp(17px,2.4vw,26px); margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}.brand small{display:block; color:var(--muted); font-size:12px; margin-top:2px}.tabs{display:flex; gap:8px}.tab,.icon-btn,.primary{border:0; cursor:pointer; font-family:inherit; border-radius:999px; padding:10px 14px; background:#fff; color:var(--ink); box-shadow:0 5px 16px rgba(82,47,21,.10); font-weight:700}.tab.active,.primary{background:linear-gradient(135deg,var(--pink),#f27daf); color:#fff}.icon-btn{width:42px; height:42px; padding:0; display:grid; place-items:center; font-size:20px}
+    main{width:min(1180px,100%); margin:0 auto; padding:clamp(12px,3vw,30px); flex:1}.screen{display:none}.screen.active{display:block}.hero{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr); gap:24px; align-items:center; min-height:calc(100dvh - 96px)}
+    .cover-wrap,.page-image-wrap,.color-card{background:rgba(255,255,255,.72); border:1px solid rgba(160,110,55,.14); border-radius:var(--radius); padding:12px; box-shadow:var(--shadow)}
+    .cover-img,.page-img{width:100%; height:auto; max-height:calc(100dvh - 155px); object-fit:contain; display:block; border-radius:16px; margin:auto}.intro-card,.story-text{background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow); padding:clamp(18px,4vw,34px); border:1px solid rgba(160,110,55,.12)}
+    .intro-card h2{font-size:clamp(28px,5vw,52px); color:var(--pink); margin:0 0 12px}.intro-card p,.story-text p{font-size:clamp(18px,2.2vw,25px); line-height:2; margin:0 0 16px}.actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}.ghost{background:#fff; color:var(--brown); border:1px solid rgba(139,90,43,.22)}
+    .story-layout{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr); gap:22px; align-items:center}.page-number{display:inline-flex; align-items:center; gap:6px; color:#9a6a2e; background:#fff4d9; border:1px solid #f0d18b; padding:7px 13px; border-radius:999px; font-weight:800; margin-bottom:14px}.story-text h2{font-size:clamp(22px,3vw,36px); color:var(--pink); margin:0 0 12px}.nav{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:18px}.progress{height:10px; background:#f0dfc4; border-radius:999px; overflow:hidden; margin:18px 0}.bar{height:100%; width:0%; background:linear-gradient(90deg,var(--gold),var(--pink)); border-radius:999px; transition:.3s}.stars{font-size:22px; letter-spacing:3px}.mini-game{margin-top:14px; padding:12px; border-radius:18px; background:#fff6e4; border:1px dashed #e3bf78}.butterfly{display:inline-grid; place-items:center; width:42px; height:42px; margin:6px; font-size:28px; border:0; background:#fff; border-radius:50%; cursor:pointer; box-shadow:0 6px 15px rgba(0,0,0,.12)}.butterfly.caught{opacity:.25; transform:scale(.8)}
+    .library{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px}.thumb{background:#fff; border-radius:18px; padding:10px; box-shadow:var(--shadow); border:1px solid rgba(160,110,55,.13); cursor:pointer}.thumb img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px}.thumb b{display:block; padding:9px 4px 2px}.coloring-layout{display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:16px; align-items:start}.canvas-wrap{background:#fff; border-radius:var(--radius); padding:10px; box-shadow:var(--shadow); overflow:auto; touch-action:none}.canvas-wrap canvas{max-width:100%; height:auto; display:block; margin:auto; border-radius:14px}.tools{background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:16px; position:sticky; top:82px}.colors{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:12px 0}.swatch{width:36px; height:36px; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 1px #ddd; cursor:pointer}.swatch.active{box-shadow:0 0 0 3px var(--pink)}.range{width:100%}.page-select{display:flex; gap:6px; flex-wrap:wrap}.page-select button{border:0; padding:8px 10px; border-radius:12px; background:#f7ead5; cursor:pointer}.page-select button.active{background:var(--pink); color:white}.mobile-hint{display:none; color:var(--muted); font-size:13px; margin-top:8px}
+    @media (max-width: 760px){
+      header{padding:8px 10px}.topbar{gap:6px}.brand small{display:none}.logo{width:36px;height:36px}.tabs{position:fixed; bottom:10px; left:10px; right:10px; z-index:20; background:rgba(255,255,255,.92); padding:8px; border-radius:22px; box-shadow:var(--shadow); justify-content:center}.tab{flex:1; padding:10px 8px; font-size:13px}main{padding:12px 10px 86px}.hero,.story-layout,.coloring-layout{grid-template-columns:1fr; gap:12px; min-height:auto}.hero{padding-top:6px}.cover-wrap,.page-image-wrap{padding:7px; border-radius:16px}.cover-img,.page-img{max-height:52dvh; width:100%; object-fit:contain; border-radius:12px}.intro-card,.story-text{padding:16px; border-radius:18px}.intro-card p,.story-text p{font-size:17px; line-height:1.8}.actions .primary,.actions .tab,.actions .ghost{flex:1}.nav{position:sticky; bottom:74px; background:rgba(255,250,243,.9); border-radius:18px; padding:8px; backdrop-filter:blur(10px)}.tools{position:static}.coloring-layout{display:flex; flex-direction:column}.tools{order:-1; width:100%}.mobile-hint{display:block}
+    }
+    @media (orientation:landscape) and (max-height:520px){
+      .story-layout,.hero{grid-template-columns:1fr 1fr; align-items:center}.page-img,.cover-img{max-height:72dvh}.intro-card p,.story-text p{font-size:15px; line-height:1.55}.story-text,.intro-card{padding:14px}.tabs{position:static; padding:0; background:transparent; box-shadow:none}.tab{flex:initial}.nav{position:static}main{padding-bottom:12px}
+    }
+  </style>
 </head>
 <body>
 <div class="app">
-<header><h1>مغامرة مسك والدب</h1><div class="badges" id="stars"></div></header>
-<main class="book" id="book">
-  <section class="scene cover active" data-text="مغامرة مسك والدب. اضغطي ابدأ المغامرة.">
-    <img src="assets/cover.png" alt="غلاف القصة"><div class="panel">مغامرة مسك<br>والدب<br><button class="secondary" onclick="go(1)">▶ ابدأ المغامرة</button></div>
-  </section>
-  <section class="scene" data-text="في يوم مشمس، قررت مسك أن تزور صديقها الدب في بيته داخل الغابة. طرقت الباب وقالت: مرحباً يا دب! هل أنت هنا؟">
-    <img src="assets/page1.png" alt="مسك تطرق باب الدب"><div class="tap-note">اضغطي على الباب 🚪</div><div class="hotspot" style="right:5%;top:8%;width:36%;height:76%" onclick="show('طرق طرق! الباب يُفتح الآن')"></div>
-  </section>
-  <section class="scene" data-text="فتح الدب الباب بفرح وقال: أهلاً بك يا مسك! تفضلي، لقد أعددت لك بعض الشاي والعسل.">
-    <img src="assets/page2.png" alt="الدب يقدم الشاي"><div class="tap-note">اضغطي على الشاي ☕</div><div class="hotspot" style="left:22%;bottom:5%;width:30%;height:24%" onclick="show('الشاي دافئ ولذيذ ☕')"></div>
-  </section>
-  <section class="scene" data-text="بعد الشاي قالت مسك: لنستكشف الغابة! وانطلقا معاً في مغامرة بين الأشجار والزهور يبحثان عن الفراشات الجميلة.">
-    <img src="assets/page3.png" alt="مسك والدب في الغابة"><div class="tap-note">التقطي 3 فراشات 🦋</div><span class="butterfly" style="left:20%;top:20%" onclick="catchButterfly(this)">🦋</span><span class="butterfly" style="right:16%;top:34%" onclick="catchButterfly(this)">🦋</span><span class="butterfly" style="left:50%;top:55%" onclick="catchButterfly(this)">🦋</span></section>
-  <section class="scene" data-text="فجأة بدأت الغيوم تتجمع، وقرر الدب أن يعودا إلى المنزل قبل المطر. قالت مسك: كان يوماً رائعاً، شكراً لك يا دب.">
-    <img src="assets/page4.png" alt="مسك والدب تحت ورقة كبيرة"><div class="rain" id="rain"></div><div class="tap-note">اضغطي على السحابة 🌧</div><div class="hotspot" style="left:0;top:0;width:45%;height:35%" onclick="toggleRain()"></div>
-  </section>
-  <section class="scene" data-text="عادا إلى البيت، وجلسا قرب النافذة يشاهدان المطر. قال الدب: الصداقة مثل المطر، تجعل حياتنا أجمل. ابتسمت مسك وقالت: نعم، ومعك يا دب كل يوم مغامرة جميلة.">
-    <img src="assets/page5.png" alt="مسك والدب يشاهدان المطر"><div class="tap-note">اضغطي على القلب ❤️</div><div class="hotspot" style="right:0;bottom:0;width:42%;height:30%" onclick="show('وسام صديق الدب 🏅')"></div></section>
-  <div class="msg" id="msg"></div>
-</main>
-<nav class="controls"><button class="light" onclick="go(current-1)">السابق</button><button onclick="speakPage()">🔊 اقرأ لي</button><button class="secondary" onclick="openColoring()">🎨 التلوين</button><span class="progress" id="progress"></span><button class="secondary" onclick="go(current+1)">التالي</button><button class="light" onclick="go(0)">الغلاف</button></nav>
-<div class="small">نموذج تجريبي HTML يعمل من المتصفح. افتحي الملف index.html.</div>
+  <header>
+    <div class="topbar">
+      <div class="brand"><div class="logo">🌸</div><div><h1>مغامرة مسك والدب</h1><small>كتاب تفاعلي مناسب للجوال والويب</small></div></div>
+      <div class="tabs">
+        <button class="tab active" data-screen="home">الغلاف</button>
+        <button class="tab" data-screen="story">القصة</button>
+        <button class="tab" data-screen="coloring">التلوين</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section id="home" class="screen active">
+      <div class="hero">
+        <div class="cover-wrap"><img class="cover-img" src="assets/cover.png" alt="غلاف مغامرة مسك والدب"></div>
+        <div class="intro-card">
+          <h2>هيا نبدأ المغامرة!</h2>
+          <p>قصة قصيرة تفاعلية عن الصداقة والاستكشاف. التصميم الجديد يعرض الصورة كاملة على الجوال والكمبيوتر بدون قص.</p>
+          <div class="actions"><button class="primary" id="startBtn">▶️ ابدأ القصة</button><button class="tab ghost" data-screen="coloring">🎨 صفحات التلوين</button></div>
+          <p class="mobile-hint">يفضل فتح الجوال بالوضع الرأسي، ويمكن استخدام الدوران بدون أن تُقص الصورة.</p>
+        </div>
+      </div>
+    </section>
+    <section id="story" class="screen">
+      <div class="progress"><div class="bar" id="bar"></div></div>
+      <div class="story-layout">
+        <div class="page-image-wrap"><img id="pageImg" class="page-img" src="assets/page1.png" alt="صفحة القصة"></div>
+        <article class="story-text">
+          <span class="page-number" id="pageNo">الصفحة 1 من 5</span>
+          <h2 id="pageTitle">زيارة بيت الدب</h2>
+          <p id="pageText"></p>
+          <div id="gameBox" class="mini-game" hidden></div>
+          <div class="stars" id="stars">☆ ☆ ☆ ☆ ☆</div>
+          <div class="actions"><button class="primary" id="readBtn">🔊 استمع</button><button class="tab ghost" data-screen="coloring">🎨 تلوين</button></div>
+          <div class="nav"><button class="ghost tab" id="prevBtn">السابق</button><button class="primary" id="nextBtn">التالي</button></div>
+        </article>
+      </div>
+    </section>
+    <section id="coloring" class="screen">
+      <div class="coloring-layout">
+        <div class="canvas-wrap"><canvas id="paintCanvas" width="1200" height="800"></canvas></div>
+        <aside class="tools">
+          <h2>🎨 صفحات التلوين</h2>
+          <p>اختاري صفحة ثم لوني بإصبعك أو بالماوس.</p>
+          <div class="page-select" id="colorPages"></div>
+          <div class="colors" id="colors"></div>
+          <label>حجم الفرشاة <input id="brush" class="range" type="range" min="4" max="42" value="14"></label>
+          <div class="actions"><button class="primary" id="clearBtn">مسح</button><button class="ghost tab" id="saveBtn">حفظ الصورة</button></div>
+        </aside>
+      </div>
+    </section>
+  </main>
 </div>
-<div class="coloring-modal" id="coloringModal" aria-hidden="true">
-  <div class="coloring-card">
-    <div class="coloring-top">
-      <h2 style="margin:0;color:#6b3d16">🎨 صفحات القصة للتلوين</h2>
-      <button class="light" onclick="closeColoring()">إغلاق ✕</button>
-    </div>
-    <div class="coloring-tools">
-      <button class="light" onclick="setColoringPage(1)">صفحة 1</button>
-      <button class="light" onclick="setColoringPage(2)">صفحة 2</button>
-      <button class="light" onclick="setColoringPage(3)">صفحة 3</button>
-      <button class="light" onclick="setColoringPage(4)">صفحة 4</button>
-      <button class="light" onclick="setColoringPage(5)">صفحة 5</button>
-      <span class="palette active" style="background:#e53935" onclick="pickColor('#e53935',this)"></span>
-      <span class="palette" style="background:#43a047" onclick="pickColor('#43a047',this)"></span>
-      <span class="palette" style="background:#1e88e5" onclick="pickColor('#1e88e5',this)"></span>
-      <span class="palette" style="background:#fdd835" onclick="pickColor('#fdd835',this)"></span>
-      <span class="palette" style="background:#8e24aa" onclick="pickColor('#8e24aa',this)"></span>
-      <span class="palette" style="background:#6d4c41" onclick="pickColor('#6d4c41',this)"></span>
-      <label>حجم الفرشاة <input class="range" id="brushSize" type="range" min="4" max="38" value="16"></label>
-      <button onclick="clearColoring()">مسح التلوين</button>
-      <button class="secondary" onclick="downloadColoring()">حفظ الصورة</button>
-    </div>
-    <div class="coloring-wrap" id="coloringWrap">
-      <img id="coloringImg" src="assets/coloring/coloring1.png" alt="صفحة تلوين">
-      <canvas id="colorCanvas"></canvas>
-    </div>
-    <p class="small" style="text-align:center">اختاري الصفحة ثم لوني بإصبعك أو بالماوس. يمكن حفظ التلوين كصورة.</p>
-  </div>
-</div>
-
 <script>
-let current=0, stars=0, caught=0;const scenes=[...document.querySelectorAll('.scene')];const starsBox=document.getElementById('stars');
-function initStars(){starsBox.innerHTML='';for(let i=0;i<5;i++){let s=document.createElement('span');s.className='star';s.textContent='⭐';starsBox.appendChild(s)}}
-function updateStars(){[...starsBox.children].forEach((s,i)=>s.classList.toggle('on',i<stars));}
-function go(n){if(n<0)n=0;if(n>=scenes.length)n=scenes.length-1;scenes[current].classList.remove('active');current=n;scenes[current].classList.add('active');document.getElementById('progress').textContent=`صفحة ${current+1} من ${scenes.length}`;if(current>0 && stars<current){stars=current;updateStars()}hideMsg();}
-function show(t){const m=document.getElementById('msg');m.textContent=t;m.classList.add('show');setTimeout(()=>m.classList.remove('show'),2200)}function hideMsg(){document.getElementById('msg').classList.remove('show')}
-function speakPage(){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(scenes[current].dataset.text);u.lang='ar-SA';u.rate=.9;speechSynthesis.speak(u)}
-function catchButterfly(el){el.classList.add('hidden');caught++;show('أحسنتِ ⭐');if(caught>=3){stars=Math.max(stars,3);updateStars();setTimeout(()=>show('جمعتِ كل الفراشات!'),600)}}
-function toggleRain(){document.getElementById('rain').classList.toggle('on');show('بدأ المطر يهطل 🌧')}
-
-let color='#e53935', drawing=false, cPage=1;
-const modal=document.getElementById('coloringModal'), canvas=document.getElementById('colorCanvas'), ctx=canvas.getContext('2d'), cimg=document.getElementById('coloringImg');
-function sizeCanvas(){const r=document.getElementById('coloringWrap').getBoundingClientRect();canvas.width=Math.round(r.width);canvas.height=Math.round(r.width*(cimg.naturalHeight||620)/(cimg.naturalWidth||980));}
-function openColoring(){modal.classList.add('open');modal.setAttribute('aria-hidden','false');setTimeout(sizeCanvas,80)}
-function closeColoring(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
-function setColoringPage(n){cPage=n;cimg.src=`assets/coloring/coloring${n}.png`;cimg.onload=()=>{sizeCanvas();clearColoring();}}
-function pickColor(v,el){color=v;document.querySelectorAll('.palette').forEach(p=>p.classList.remove('active'));el.classList.add('active')}
-function clearColoring(){ctx.clearRect(0,0,canvas.width,canvas.height)}
-function pos(e){const r=canvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*canvas.width/r.width,y:(t.clientY-r.top)*canvas.height/r.height}}
-function startDraw(e){e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}
-function draw(e){if(!drawing)return;e.preventDefault();const p=pos(e);ctx.lineWidth=document.getElementById('brushSize').value;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=color;ctx.lineTo(p.x,p.y);ctx.stroke()}
-function endDraw(){drawing=false}
-canvas.addEventListener('mousedown',startDraw);canvas.addEventListener('mousemove',draw);window.addEventListener('mouseup',endDraw);
-canvas.addEventListener('touchstart',startDraw,{passive:false});canvas.addEventListener('touchmove',draw,{passive:false});canvas.addEventListener('touchend',endDraw);
-window.addEventListener('resize',()=>{if(modal.classList.contains('open'))sizeCanvas()});
-function downloadColoring(){const out=document.createElement('canvas');out.width=canvas.width;out.height=canvas.height;const o=out.getContext('2d');o.fillStyle='white';o.fillRect(0,0,out.width,out.height);o.drawImage(cimg,0,0,out.width,out.height);o.drawImage(canvas,0,0);const a=document.createElement('a');a.download=`misk-coloring-page-${cPage}.png`;a.href=out.toDataURL('image/png');a.click()}
-
-initStars();go(0);
+const pages=[
+ {img:'assets/page1.png',title:'زيارة بيت الدب',text:'في يومٍ مشمس، قررت مسك أن تزور صديقها الدب في بيته داخل الغابة. طرقت الباب وقالت: مرحبًا يا دب! هل أنت هنا؟'},
+ {img:'assets/page2.png',title:'الشاي والعسل',text:'فتح الدب الباب بفرح وقال: أهلاً بك يا مسك! تفضلي، لقد أعددت لك بعض الشاي والعسل.'},
+ {img:'assets/page3.png',title:'الفراشات الجميلة',text:'بعد الشاي قالت مسك: لنستكشف الغابة! وانطلقا معًا بين الأشجار والزهور، يبحثان عن الفراشات الجميلة.',game:true},
+ {img:'assets/page4.png',title:'المطر والمظلة',text:'فجأة بدأت الغيوم تتجمع، وقرر الدب أن يعودا إلى المنزل قبل المطر. قالت مسك: كان يومًا رائعًا! شكرًا لك يا دب.'},
+ {img:'assets/page5.png',title:'الصداقة أجمل',text:'عادا إلى البيت وجلسا قرب النافذة يشاهدان المطر. قال الدب: الصداقة مثل المطر، تجعل حياتنا أجمل. ابتسمت مسك وقالت: نعم، ومعك يا دب كل يوم مغامرة جميلة.'}
+];
+let current=0, earned=0;
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+function showScreen(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('.tabs .tab').forEach(b=>b.classList.toggle('active',b.dataset.screen===id)); if(id==='coloring') setTimeout(loadColoring,80)}
+$$('[data-screen]').forEach(b=>b.onclick=()=>showScreen(b.dataset.screen)); $('#startBtn').onclick=()=>{showScreen('story'); renderPage(0)};
+function renderPage(i){current=Math.max(0,Math.min(pages.length-1,i));const p=pages[current];$('#pageImg').src=p.img;$('#pageNo').textContent=`الصفحة ${current+1} من ${pages.length}`;$('#pageTitle').textContent=p.title;$('#pageText').textContent=p.text;$('#bar').style.width=((current+1)/pages.length*100)+'%';$('#prevBtn').disabled=current===0;$('#nextBtn').textContent=current===pages.length-1?'النهاية':'التالي';earned=Math.max(earned,current+1);$('#stars').textContent='★ '.repeat(earned)+'☆ '.repeat(5-earned); setupGame(p.game)}
+$('#prevBtn').onclick=()=>renderPage(current-1);$('#nextBtn').onclick=()=> current===pages.length-1?showScreen('home'):renderPage(current+1);
+$('#readBtn').onclick=()=>{const p=pages[current], audio=new Audio(`audio/page${current+1}.mp3`);audio.play().catch(()=>{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(p.text);u.lang='ar';u.rate=.9;speechSynthesis.speak(u);});};
+function setupGame(on){const box=$('#gameBox');box.hidden=!on;if(!on)return;box.innerHTML='<b>🦋 التقطي 3 فراشات:</b><br>';let caught=0;for(let i=0;i<3;i++){let btn=document.createElement('button');btn.className='butterfly';btn.textContent='🦋';btn.onclick=()=>{if(btn.classList.contains('caught'))return;btn.classList.add('caught');caught++; if(caught===3){box.insertAdjacentHTML('beforeend','<p>أحسنتِ! حصلتِ على نجمة إضافية ⭐</p>');earned=5;$("#stars").textContent='★ ★ ★ ★ ★';}};box.appendChild(btn)}}
+// Coloring
+const colorImgs=['assets/coloring/coloring1.png','assets/coloring/coloring2.png','assets/coloring/coloring3.png','assets/coloring/coloring4.png','assets/coloring/coloring5.png'];
+let canvas,ctx,drawing=false,brushColor='#d94c8a',brushSize=14,colorIndex=0,coloringReady=false;
+function loadColoring(){if(coloringReady)return; coloringReady=true; canvas=$('#paintCanvas'); ctx=canvas.getContext('2d'); buildColorButtons(); loadColorPage(0); bindPaint();}
+function buildColorButtons(){const cp=$('#colorPages'); colorImgs.forEach((_,i)=>{let b=document.createElement('button');b.textContent=i+1;b.onclick=()=>loadColorPage(i);cp.appendChild(b)}); const palette=['#111111','#ffffff','#d94c8a','#8b5cf6','#3b82f6','#22c55e','#facc15','#f97316','#ef4444','#8b5a2b']; const cs=$('#colors');palette.forEach((c,i)=>{let s=document.createElement('button');s.className='swatch'+(i===2?' active':'');s.style.background=c;s.onclick=()=>{$$('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');brushColor=c};cs.appendChild(s)});$('#brush').oninput=e=>brushSize=e.target.value;$('#clearBtn').onclick=()=>loadColorPage(colorIndex);$('#saveBtn').onclick=()=>{let a=document.createElement('a');a.download='misk-coloring.png';a.href=canvas.toDataURL('image/png');a.click();}}
+function loadColorPage(i){colorIndex=i; $$('#colorPages button').forEach((b,k)=>b.classList.toggle('active',k===i)); const img=new Image(); img.onload=()=>{canvas.width=img.width; canvas.height=img.height; ctx.fillStyle='white';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0)}; img.src=colorImgs[i];}
+function point(e){const r=canvas.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:(t.clientX-r.left)*(canvas.width/r.width), y:(t.clientY-r.top)*(canvas.height/r.height)}}
+function bindPaint(){function start(e){e.preventDefault();drawing=true;const p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}function move(e){if(!drawing)return;e.preventDefault();const p=point(e);ctx.lineWidth=brushSize;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=brushColor;ctx.lineTo(p.x,p.y);ctx.stroke()}function end(){drawing=false} canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',end);canvas.addEventListener('touchstart',start,{passive:false});canvas.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',end)}
+renderPage(0);
 </script>
 </body>
 </html>
