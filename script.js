@@ -1,9 +1,11 @@
+const version = Date.now();
+
 const colorImgs=[
-'assets/coloring/coloring1.png?v=2',
-'assets/coloring/coloring2.png?v=2',
-'assets/coloring/coloring3.png?v=2',
-'assets/coloring/coloring4.png?v=2',
-'assets/coloring/coloring5.png?v=2'
+`assets/coloring/coloring1.png?v=${version}`,
+`assets/coloring/coloring2.png?v=${version}`,
+`assets/coloring/coloring3.png?v=${version}`,
+`assets/coloring/coloring4.png?v=${version}`,
+`assets/coloring/coloring5.png?v=${version}`
 ];
 let current=0, earned=0, currentAudio=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
