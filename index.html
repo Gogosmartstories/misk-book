@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>مغامرة مسك والدب - نموذج تفاعلي</title>
+<style>
+:root{--pink:#d64a83;--brown:#6b3d16;--cream:#fff6df;--gold:#f5cf75}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#f7ead0,#fff7e8);min-height:100vh;display:flex;align-items:center;justify-content:center;color:#3b2613}
+.app{width:min(980px,96vw);min-height:92vh;display:grid;grid-template-rows:auto 1fr auto;gap:12px;padding:14px}
+header,.controls{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(255,255,255,.72);border:2px solid #efd7ad;border-radius:22px;padding:10px 14px;box-shadow:0 8px 22px rgba(80,42,10,.12)}
+h1{font-size:clamp(18px,3vw,28px);margin:0;color:var(--brown)}
+.badges{display:flex;gap:6px;direction:ltr}.star{font-size:24px;filter:grayscale(1);opacity:.35}.star.on{filter:none;opacity:1}
+.book{position:relative;overflow:hidden;border-radius:28px;border:4px solid #e5c08a;background:#fff;box-shadow:0 20px 45px rgba(70,40,10,.25);min-height:620px;display:flex;align-items:center;justify-content:center}
+.scene{position:absolute;inset:0;display:none}.scene.active{display:block;animation:fade .45s ease}@keyframes fade{from{opacity:.35;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+.scene img{width:100%;height:100%;object-fit:cover;display:block}
+.panel{position:absolute;inset:auto 6% 6% 6%;background:rgba(255,248,229,.88);border:2px solid #ecd1a1;border-radius:22px;padding:14px 18px;font-size:clamp(16px,2.1vw,23px);line-height:1.9;text-align:center;box-shadow:0 10px 24px rgba(91,52,12,.18)}
+.cover .panel{top:10%;bottom:auto;right:8%;left:auto;width:min(420px,75%);font-size:clamp(24px,5vw,48px);font-weight:bold;color:var(--pink)}
+button{border:0;border-radius:18px;background:var(--brown);color:white;padding:12px 18px;font-size:17px;cursor:pointer;box-shadow:0 6px 0 #3e2109}button:active{transform:translateY(3px);box-shadow:0 3px 0 #3e2109}button.secondary{background:#cf4a83;box-shadow:0 6px 0 #8a2450}button.light{background:#fff;color:#6b3d16;border:2px solid #e8c789;box-shadow:none}
+.hotspot{position:absolute;border:3px dashed rgba(255,255,255,.0);border-radius:24px;cursor:pointer}.hotspot:hover{border-color:rgba(255,217,92,.85);background:rgba(255,239,142,.12)}
+.tap-note{position:absolute;top:14px;right:14px;background:#fffbef;border:2px solid #e7c47d;border-radius:16px;padding:8px 12px;font-weight:bold;color:#7a4815}.msg{position:absolute;left:50%;top:18%;transform:translateX(-50%);background:white;border:3px solid var(--gold);border-radius:24px;padding:12px 18px;font-size:22px;font-weight:bold;display:none;z-index:6}.msg.show{display:block;animation:pop .5s}@keyframes pop{0%{transform:translateX(-50%) scale(.6)}80%{transform:translateX(-50%) scale(1.08)}100%{transform:translateX(-50%) scale(1)}}
+.butterfly{position:absolute;font-size:38px;cursor:pointer;animation:float 2.6s infinite ease-in-out}.butterfly:nth-child(2){animation-delay:.5s}.butterfly:nth-child(3){animation-delay:1s}@keyframes float{50%{transform:translateY(-20px) rotate(8deg)}}.hidden{display:none}.rain{position:absolute;inset:0;pointer-events:none;display:none;background-image:repeating-linear-gradient(110deg,rgba(75,138,210,.0) 0 12px,rgba(75,138,210,.55) 13px 15px,rgba(75,138,210,.0) 16px 34px);animation:rain .45s linear infinite}.rain.on{display:block}@keyframes rain{to{background-position:0 34px}}
+.progress{font-weight:bold;color:#704411}.small{font-size:13px;opacity:.8}
+.coloring-modal{position:fixed;inset:0;background:rgba(38,24,10,.72);z-index:30;display:none;align-items:center;justify-content:center;padding:14px}.coloring-modal.open{display:flex}.coloring-card{width:min(980px,98vw);max-height:96vh;overflow:auto;background:#fff8e8;border:3px solid #e5c08a;border-radius:28px;padding:14px;box-shadow:0 25px 60px rgba(0,0,0,.35)}.coloring-top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}.coloring-tools{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}.coloring-wrap{position:relative;width:100%;max-width:860px;margin:auto;border:3px solid #d7b171;border-radius:18px;overflow:hidden;background:white}.coloring-wrap img,.coloring-wrap canvas{width:100%;display:block}.coloring-wrap canvas{position:absolute;inset:0;touch-action:none}.palette{width:42px;height:42px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #b88742;cursor:pointer}.palette.active{box-shadow:0 0 0 4px #6b3d16}.range{accent-color:#6b3d16}
+@media(max-width:700px){.book{min-height:70vh}.controls{flex-wrap:wrap;justify-content:center}header{flex-direction:column}.panel{font-size:15px;line-height:1.7}.cover .panel{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>مغامرة مسك والدب</h1><div class="badges" id="stars"></div></header>
+<main class="book" id="book">
+  <section class="scene cover active" data-text="مغامرة مسك والدب. اضغطي ابدأ المغامرة.">
+    <img src="assets/cover.png" alt="غلاف القصة"><div class="panel">مغامرة مسك<br>والدب<br><button class="secondary" onclick="go(1)">▶ ابدأ المغامرة</button></div>
+  </section>
+  <section class="scene" data-text="في يوم مشمس، قررت مسك أن تزور صديقها الدب في بيته داخل الغابة. طرقت الباب وقالت: مرحباً يا دب! هل أنت هنا؟">
+    <img src="assets/page1.png" alt="مسك تطرق باب الدب"><div class="tap-note">اضغطي على الباب 🚪</div><div class="hotspot" style="right:5%;top:8%;width:36%;height:76%" onclick="show('طرق طرق! الباب يُفتح الآن')"></div>
+  </section>
+  <section class="scene" data-text="فتح الدب الباب بفرح وقال: أهلاً بك يا مسك! تفضلي، لقد أعددت لك بعض الشاي والعسل.">
+    <img src="assets/page2.png" alt="الدب يقدم الشاي"><div class="tap-note">اضغطي على الشاي ☕</div><div class="hotspot" style="left:22%;bottom:5%;width:30%;height:24%" onclick="show('الشاي دافئ ولذيذ ☕')"></div>
+  </section>
+  <section class="scene" data-text="بعد الشاي قالت مسك: لنستكشف الغابة! وانطلقا معاً في مغامرة بين الأشجار والزهور يبحثان عن الفراشات الجميلة.">
+    <img src="assets/page3.png" alt="مسك والدب في الغابة"><div class="tap-note">التقطي 3 فراشات 🦋</div><span class="butterfly" style="left:20%;top:20%" onclick="catchButterfly(this)">🦋</span><span class="butterfly" style="right:16%;top:34%" onclick="catchButterfly(this)">🦋</span><span class="butterfly" style="left:50%;top:55%" onclick="catchButterfly(this)">🦋</span></section>
+  <section class="scene" data-text="فجأة بدأت الغيوم تتجمع، وقرر الدب أن يعودا إلى المنزل قبل المطر. قالت مسك: كان يوماً رائعاً، شكراً لك يا دب.">
+    <img src="assets/page4.png" alt="مسك والدب تحت ورقة كبيرة"><div class="rain" id="rain"></div><div class="tap-note">اضغطي على السحابة 🌧</div><div class="hotspot" style="left:0;top:0;width:45%;height:35%" onclick="toggleRain()"></div>
+  </section>
+  <section class="scene" data-text="عادا إلى البيت، وجلسا قرب النافذة يشاهدان المطر. قال الدب: الصداقة مثل المطر، تجعل حياتنا أجمل. ابتسمت مسك وقالت: نعم، ومعك يا دب كل يوم مغامرة جميلة.">
+    <img src="assets/page5.png" alt="مسك والدب يشاهدان المطر"><div class="tap-note">اضغطي على القلب ❤️</div><div class="hotspot" style="right:0;bottom:0;width:42%;height:30%" onclick="show('وسام صديق الدب 🏅')"></div></section>
+  <div class="msg" id="msg"></div>
+</main>
+<nav class="controls"><button class="light" onclick="go(current-1)">السابق</button><button onclick="speakPage()">🔊 اقرأ لي</button><button class="secondary" onclick="openColoring()">🎨 التلوين</button><span class="progress" id="progress"></span><button class="secondary" onclick="go(current+1)">التالي</button><button class="light" onclick="go(0)">الغلاف</button></nav>
+<div class="small">نموذج تجريبي HTML يعمل من المتصفح. افتحي الملف index.html.</div>
+</div>
+<div class="coloring-modal" id="coloringModal" aria-hidden="true">
+  <div class="coloring-card">
+    <div class="coloring-top">
+      <h2 style="margin:0;color:#6b3d16">🎨 صفحات القصة للتلوين</h2>
+      <button class="light" onclick="closeColoring()">إغلاق ✕</button>
+    </div>
+    <div class="coloring-tools">
+      <button class="light" onclick="setColoringPage(1)">صفحة 1</button>
+      <button class="light" onclick="setColoringPage(2)">صفحة 2</button>
+      <button class="light" onclick="setColoringPage(3)">صفحة 3</button>
+      <button class="light" onclick="setColoringPage(4)">صفحة 4</button>
+      <button class="light" onclick="setColoringPage(5)">صفحة 5</button>
+      <span class="palette active" style="background:#e53935" onclick="pickColor('#e53935',this)"></span>
+      <span class="palette" style="background:#43a047" onclick="pickColor('#43a047',this)"></span>
+      <span class="palette" style="background:#1e88e5" onclick="pickColor('#1e88e5',this)"></span>
+      <span class="palette" style="background:#fdd835" onclick="pickColor('#fdd835',this)"></span>
+      <span class="palette" style="background:#8e24aa" onclick="pickColor('#8e24aa',this)"></span>
+      <span class="palette" style="background:#6d4c41" onclick="pickColor('#6d4c41',this)"></span>
+      <label>حجم الفرشاة <input class="range" id="brushSize" type="range" min="4" max="38" value="16"></label>
+      <button onclick="clearColoring()">مسح التلوين</button>
+      <button class="secondary" onclick="downloadColoring()">حفظ الصورة</button>
+    </div>
+    <div class="coloring-wrap" id="coloringWrap">
+      <img id="coloringImg" src="assets/coloring/coloring1.png" alt="صفحة تلوين">
+      <canvas id="colorCanvas"></canvas>
+    </div>
+    <p class="small" style="text-align:center">اختاري الصفحة ثم لوني بإصبعك أو بالماوس. يمكن حفظ التلوين كصورة.</p>
+  </div>
+</div>
+
+<script>
+let current=0, stars=0, caught=0;const scenes=[...document.querySelectorAll('.scene')];const starsBox=document.getElementById('stars');
+function initStars(){starsBox.innerHTML='';for(let i=0;i<5;i++){let s=document.createElement('span');s.className='star';s.textContent='⭐';starsBox.appendChild(s)}}
+function updateStars(){[...starsBox.children].forEach((s,i)=>s.classList.toggle('on',i<stars));}
+function go(n){if(n<0)n=0;if(n>=scenes.length)n=scenes.length-1;scenes[current].classList.remove('active');current=n;scenes[current].classList.add('active');document.getElementById('progress').textContent=`صفحة ${current+1} من ${scenes.length}`;if(current>0 && stars<current){stars=current;updateStars()}hideMsg();}
+function show(t){const m=document.getElementById('msg');m.textContent=t;m.classList.add('show');setTimeout(()=>m.classList.remove('show'),2200)}function hideMsg(){document.getElementById('msg').classList.remove('show')}
+function speakPage(){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(scenes[current].dataset.text);u.lang='ar-SA';u.rate=.9;speechSynthesis.speak(u)}
+function catchButterfly(el){el.classList.add('hidden');caught++;show('أحسنتِ ⭐');if(caught>=3){stars=Math.max(stars,3);updateStars();setTimeout(()=>show('جمعتِ كل الفراشات!'),600)}}
+function toggleRain(){document.getElementById('rain').classList.toggle('on');show('بدأ المطر يهطل 🌧')}
+
+let color='#e53935', drawing=false, cPage=1;
+const modal=document.getElementById('coloringModal'), canvas=document.getElementById('colorCanvas'), ctx=canvas.getContext('2d'), cimg=document.getElementById('coloringImg');
+function sizeCanvas(){const r=document.getElementById('coloringWrap').getBoundingClientRect();canvas.width=Math.round(r.width);canvas.height=Math.round(r.width*(cimg.naturalHeight||620)/(cimg.naturalWidth||980));}
+function openColoring(){modal.classList.add('open');modal.setAttribute('aria-hidden','false');setTimeout(sizeCanvas,80)}
+function closeColoring(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+function setColoringPage(n){cPage=n;cimg.src=`assets/coloring/coloring${n}.png`;cimg.onload=()=>{sizeCanvas();clearColoring();}}
+function pickColor(v,el){color=v;document.querySelectorAll('.palette').forEach(p=>p.classList.remove('active'));el.classList.add('active')}
+function clearColoring(){ctx.clearRect(0,0,canvas.width,canvas.height)}
+function pos(e){const r=canvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*canvas.width/r.width,y:(t.clientY-r.top)*canvas.height/r.height}}
+function startDraw(e){e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}
+function draw(e){if(!drawing)return;e.preventDefault();const p=pos(e);ctx.lineWidth=document.getElementById('brushSize').value;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=color;ctx.lineTo(p.x,p.y);ctx.stroke()}
+function endDraw(){drawing=false}
+canvas.addEventListener('mousedown',startDraw);canvas.addEventListener('mousemove',draw);window.addEventListener('mouseup',endDraw);
+canvas.addEventListener('touchstart',startDraw,{passive:false});canvas.addEventListener('touchmove',draw,{passive:false});canvas.addEventListener('touchend',endDraw);
+window.addEventListener('resize',()=>{if(modal.classList.contains('open'))sizeCanvas()});
+function downloadColoring(){const out=document.createElement('canvas');out.width=canvas.width;out.height=canvas.height;const o=out.getContext('2d');o.fillStyle='white';o.fillRect(0,0,out.width,out.height);o.drawImage(cimg,0,0,out.width,out.height);o.drawImage(canvas,0,0);const a=document.createElement('a');a.download=`misk-coloring-page-${cPage}.png`;a.href=out.toDataURL('image/png');a.click()}
+
+initStars();go(0);
+</script>
+</body>
+</html>
