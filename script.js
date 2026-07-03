@@ -1,9 +1,9 @@
-const pages=[
- {img:'assets/page1.png',title:'زيارة بيت الدب',text:'في يومٍ مشمس، قررت مسك أن تزور صديقها الدب في بيته داخل الغابة. طرقت الباب وقالت: مرحبًا يا دب! هل أنت هنا؟'},
- {img:'assets/page2.png',title:'الشاي والعسل',text:'فتح الدب الباب بفرح وقال: أهلاً بك يا مسك! تفضلي، لقد أعددت لك بعض الشاي والعسل.'},
- {img:'assets/page3.png',title:'الفراشات الجميلة',text:'بعد الشاي قالت مسك: لنستكشف الغابة! وانطلقا معًا بين الأشجار والزهور، يبحثان عن الفراشات الجميلة.',game:true},
- {img:'assets/page4.png',title:'المطر والمظلة',text:'فجأة بدأت الغيوم تتجمع، وقرر الدب أن يعودا إلى المنزل قبل المطر. قالت مسك: كان يومًا رائعًا! شكرًا لك يا دب.'},
- {img:'assets/page5.png',title:'الصداقة أجمل',text:'عادا إلى البيت وجلسا قرب النافذة يشاهدان المطر. قال الدب: الصداقة مثل المطر، تجعل حياتنا أجمل. ابتسمت مسك وقالت: نعم، ومعك يا دب كل يوم مغامرة جميلة.'}
+const colorImgs=[
+'assets/coloring/coloring1.png?v=2',
+'assets/coloring/coloring2.png?v=2',
+'assets/coloring/coloring3.png?v=2',
+'assets/coloring/coloring4.png?v=2',
+'assets/coloring/coloring5.png?v=2'
 ];
 let current=0, earned=0, currentAudio=null;
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
